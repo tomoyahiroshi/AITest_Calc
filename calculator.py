@@ -4,8 +4,11 @@ from tkinter import ttk
 
 class CalculatorEngine:
     def __init__(self) -> None:
+        # 計算式全体を保持する内部文字列。
         self.expression = ""
+        # 画面に表示する現在値（初期値は 0）。
         self.display = "0"
+        # エラー表示中かどうかを管理するフラグ。
         self.error_state = False
 
     def _reset_on_error_if_needed(self, value: str) -> None:
@@ -13,6 +16,7 @@ class CalculatorEngine:
             self.all_clear()
 
     def input_digit_or_dot(self, value: str) -> None:
+        # 小数点の重複入力を防ぎ、必要なら先頭に 0 を補う。
         self._reset_on_error_if_needed(value)
         if value == ".":
             token = self._current_token()
@@ -24,6 +28,7 @@ class CalculatorEngine:
         self.display = self._current_token() or "0"
 
     def input_operator(self, op: str) -> None:
+        # 末尾が演算子なら置き換え、そうでなければ追記する。
         if self.error_state:
             return
         if not self.expression:
@@ -77,6 +82,7 @@ class CalculatorEngine:
         self.error_state = False
 
     def evaluate(self) -> None:
+        # 入力済みの式を評価し、結果またはエラーを表示に反映する。
         if self.error_state:
             return
         if not self.expression:
@@ -136,6 +142,7 @@ class CalculatorApp(tk.Tk):
         self._bind_keys()
 
     def _build_ui(self) -> None:
+        # 表示部と 5x4 のボタン配置で UI を構築する。
         main = ttk.Frame(self, padding=8)
         main.grid(sticky="nsew")
 
@@ -187,6 +194,7 @@ class CalculatorApp(tk.Tk):
                 button.grid(row=r, column=c, sticky="nsew", padx=2, pady=2, ipadx=4, ipady=10)
 
     def _bind_keys(self) -> None:
+        # キーボード入力をボタン操作と同じハンドラに割り当てる。
         for key in "0123456789":
             self.bind(key, lambda event, v=key: self._handle_button(v))
         for key in ["+", "-", "*", "/", "."]:
